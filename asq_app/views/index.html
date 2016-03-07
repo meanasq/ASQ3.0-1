@@ -40,7 +40,7 @@
     <script src="js/datepicker/angular.js"></script>
     <script src="js/datepicker/ui-bootstrap-tpls-0.14.3.js"></script>
 	
-	<!-- Added for ASQ Upgrade2.1 By Ayesha Taqdees. -->
+	<!-- Added for ASQ Upgrade 3.0 By Ayesha Taqdees. -->
 	
 	 <script src="js/controllers/datepicker.js"></script>
 	 <script src="js/controllers/index.js"></script>
@@ -58,12 +58,10 @@
 	 <script src="js/controllers/report.js"></script>
 	 <script src="js/controllers/history.js"></script>
 	 <script src="js/controllers/nav.js"></script>
-	
-	 
-    
+
 	<title>Big Bang ASQ</title>
 </head>
-<body class="gray-bg" ng-app="quizApp" ng-controller = 'indexCtrl'>
+<body class="" ng-app="quizApp" ng-controller = 'indexCtrl'>
 	<timer style="text-decoration: underline; filter: alpha(opacity: 0.6); opacity: 0.6; color: red; font-weight: bold; font-size: 22px; position: fixed; top: 30px; left: 44%;" ng-if="timer" interval="1000" countdown="7200">Time Remains: {{hours}}:{{minutes}}:{{seconds}}</timer>
 	<div ng-view></div>
 </body>
