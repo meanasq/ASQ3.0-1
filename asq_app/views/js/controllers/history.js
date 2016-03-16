@@ -1,142 +1,143 @@
+/*
+ * @date : 03/15/2016
+ * @author : Ayesha Taqdees
+ * @description : Modified for ASQ 3.0 - Fixed Table and Chart View UI
+ */
 app.controller('historyCtrl', function ($q, $scope, $rootScope, $http, $location) {
 	
-	//Updated for ASQ Upgrade2.0 and added code for Pagination.
-	$scope.currentPage = 1;
-	$scope.numPerPage = 10;
-	$scope.maxSize = 5;
-	var begin = (($scope.currentPage - 1) * $scope.numPerPage)
-    , end = begin + $scope.numPerPage;
+    $scope.currentPage = 1;
+    $scope.numPerPage = 10;
+    $scope.maxSize = 5;
+    $scope.sor = 'date';
 
-	$scope.showReview = false;
-	$scope.logout = function () {
-		$http.post('/logout',$rootScope.user).success(function () {
-			$location.url('/');
-			$rootScope.currentUser = undefined;
-			$rootScope.user = undefined;
-		})
-	};
-	var postData ={
-		email: $rootScope.currentUser.email
-	};
+    $scope.viewType = 'Chart';
 
-	//Modified below code to add the Pagination for all the history records.
-	$http.post('/getRecord',postData).success(function (response) {
-		$scope.partialHistory = [];
-		$scope.allHistory = [];
-		$scope.histories = response;
-		for(i=0;i<=$scope.histories.length-1;i++) {
-			$scope.allHistory.push($scope.histories[i]);
-		}
-		$scope.partialHistory = $scope.allHistory.slice(begin, end);
-		console.log(response);
-	});
+    $scope.toggleView = function () {
+        if ($scope.viewType == 'Table')
+            $scope.viewType = 'Chart';
+        else
+            $scope.viewType = 'Table';
+    }
+
+    var begin = (($scope.currentPage - 1) * $scope.numPerPage)
+        , end = begin + $scope.numPerPage;
+
+    $scope.showReview = false;
+    $scope.logout = function () {
+        $http.post('/logout', $rootScope.user).success(function () {
+            $location.url('/');
+            $rootScope.currentUser = undefined;
+            $rootScope.user = undefined;
+        })
+    };
+    var postData = {
+        email: $rootScope.currentUser.email
+    };
+
+  
+    $http.post('/getRecord', postData).success(function (response) {
+        $scope.partialHistory = [];
+        $scope.allHistory = [];
+        $scope.histories = response;
+        for (var i = 0; i <= $scope.histories.length - 1; i++) {
+            $scope.allHistory.push($scope.histories[i]);
+        }
+        $scope.partialHistory = $scope.allHistory.slice(begin, end);
+        console.log(response);
+    });
+
+    $scope.$watch('currentPage + numPerPage', function () {
+        begin = (($scope.currentPage - 1) * $scope.numPerPage);
+        end = begin + $scope.numPerPage;
+        $scope.partialHistory = $scope.allHistory.slice(begin, end);
+    });
+    //End Pagination changes here.
 	
-	$scope.$watch('currentPage + numPerPage', function() {
-	    begin = (($scope.currentPage - 1) * $scope.numPerPage);
-	    end = begin + $scope.numPerPage;
-	    $scope.partialHistory = $scope.allHistory.slice(begin, end);
-	  });
-	//End Pagination changes here.
+    $scope.detail = function (histDate) {
+        var detailData = {
+            email: $rootScope.currentUser.email,
+            date: histDate
+        };
+        $http.post('/getRecord', detailData).success(function (response) {
+            $rootScope.historyDetail = response;
+            $location.url('historyDetail/');
+
+        });
+    };
 	
-	$scope.detail = function (lol) {
-		var detailData = {
-			email:$rootScope.currentUser.email,
-			date: lol
-		};
-		$http.post('/getRecord',detailData).success(function (response) {
-			$rootScope.historyDetail = response;
-			$location.url('historyDetail/');
+  
+    $scope.vis = true;
+    $scope.invis = false;
+    $scope.review = function () {
+        $scope.showReview = true;
+        $scope.vis = false;
+        $scope.invis = true;
+    };
 
-		});
-	};
-	
-	//Added this method to get the details related to practice/exam history progress details.
-	$scope.detailProgress = function (histDate) {
-		var detailProgressData = {
-			email:$rootScope.currentUser.email,
-			date: histDate
-		};
-		$http.post('/getRecord',detailProgressData).success(function (response) {
-			$rootScope.historyProgressDetail = response;
-			console.log("historyProgressDetail is "+$rootScope.historyProgressDetail);
-			$location.url('historyDetailsStatus/');
+    $scope.hide = function () {
+        $scope.showReview = false;
+        $scope.vis = true;
+        $scope.invis = false;
+    };
 
-		});
-	};
+    $scope.cate = function (category) {
+        var cate = "";
+        switch (category) {
+            case "ep":
+                cate = "Software Engineering Processes";
+                break;
+            case "gk":
+                cate = "Software Engineering Processes";
+                break;
+            case "mam":
+                cate = "Software Metrics & Analysis";
+                break;
+            case "pm":
+                cate = "Software Project Management";
+                break;
+            case "scm":
+                cate = "Software Configuration Management";
+                break;
+            case "sqm":
+                cate = "Software Quality Management";
+                break;
+            case "SVV":
+                cate = "Software Verification & Validation";
+                break;
+            default:
+                cate = "";
+        }
+        return cate;
+    };
 
-	$scope.vis = true;
-	$scope.invis = false;
-	$scope.review = function () {
-		$scope.showReview = true;
-		$scope.vis = false;
-		$scope.invis = true;
-	};
-
-	$scope.hide = function () {
-		$scope.showReview = false;
-		$scope.vis = true;
-		$scope.invis = false;
-	};
-
-	$scope.cate = function (category) {
-		var cate = "";
-		switch(category)
-		{
-			case "ep":
-				cate = "Software Engineering Processes";
-				break;
-			case "gk":
-				cate = "Software Engineering Processes";
-				break;
-			case "mam":
-				cate = "Software Metrics & Analysis";
-				break;
-			case "pm":
-				cate = "Software Project Management";
-				break;
-			case "scm":
-				cate = "Software Configuration Management";
-				break;
-			case "sqm":
-				cate = "Software Quality Management";
-				break;
-			case "SVV":
-				cate = "Software Verification & Validation";
-				break;
-			default:
-				cate = "";
-		}
-		return cate;
-	};
-
-	//Added by Srinivas Thungathurti for ASQ Upgrade2.0.For integrating Dynamic Chart application part of ASQ Exam portal.
-	function getData (postData,number){
+    //Added by Srinivas Thungathurti for ASQ Upgrade2.0.For integrating Dynamic Chart application part of ASQ Exam portal.
+    function getData(postData, number) {
         var deferred = $q.defer();
-        if (number){
+        if (number) {
             postData.number = number
         }
-        $http.post('/getRecordForChart', postData).success(function(response){
+        $http.post('/getRecordForChart', postData).success(function (response) {
             deferred.resolve(response)
         });
         return deferred.promise
     }
-	
-	var quizPostData = {
-	        email: $rootScope.currentUser.email,
-	        mode:'Exam',
-	        number: 3
-	};
 
-	var practisePostData = {
-	        email: $rootScope.currentUser.email,
-	        mode:'Practice',
-	        number: 3
-	};
-	
-	$scope.init = function (num){
-		if(num > 3) $rootScope.numbers = num;
-        quizPostData.number = $rootScope.numbers? $rootScope.numbers: 3;
-        practisePostData.number = $rootScope.numbers? $rootScope.numbers: 3;
+    var quizPostData = {
+        email: $rootScope.currentUser.email,
+        mode: 'Exam',
+        number: 3
+    };
+
+    var practisePostData = {
+        email: $rootScope.currentUser.email,
+        mode: 'Practice',
+        number: 3
+    };
+
+    $scope.init = function (num) {
+        if (num > 3) $rootScope.numbers = num;
+        quizPostData.number = $rootScope.numbers ? $rootScope.numbers : 3;
+        practisePostData.number = $rootScope.numbers ? $rootScope.numbers : 3;
         $scope.quizChartConfig = {
             "options": {
                 "chart": {
@@ -151,8 +152,8 @@ app.controller('historyCtrl', function ($q, $scope, $rootScope, $http, $location
             xAxis: {
                 categories: []
             },
-            yAxis:{
-                title:{text:"Score"},
+            yAxis: {
+                title: { text: "Score" },
                 max: 100,
                 min: 0
             },
@@ -232,8 +233,8 @@ app.controller('historyCtrl', function ($q, $scope, $rootScope, $http, $location
             xAxis: {
                 categories: []
             },
-            yAxis:{
-                title:{text:"Score"},
+            yAxis: {
+                title: { text: "Score" },
                 max: 100,
                 min: 0
             },
@@ -258,7 +259,7 @@ app.controller('historyCtrl', function ($q, $scope, $rootScope, $http, $location
         };
 
 
-        getData(practisePostData).then(function(data){
+        getData(practisePostData).then(function (data) {
             data.forEach(function (value) {
                 $scope.practiseChartConfig.xAxis.categories.unshift(value.time);
                 $scope.practiseChartConfig.series[0].data.unshift(value.score)
@@ -266,7 +267,7 @@ app.controller('historyCtrl', function ($q, $scope, $rootScope, $http, $location
 
         });
 
-        getData(quizPostData).then(function(data){
+        getData(quizPostData).then(function (data) {
             data.forEach(function (value) {
                 $scope.quizChartConfig.xAxis.categories.unshift(value.time);
                 $scope.quizChartConfig.series[0].data.unshift(value.score);

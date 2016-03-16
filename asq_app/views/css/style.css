@@ -219,7 +219,7 @@ fieldset[disabled] .btn-white.active {
     font-size: 16px
 }
 .customBtn {
-    width: 200px;
+    width: 250px;
     height: 80px;
 }
 .customSpan {
@@ -295,3 +295,6 @@ hr {
     left: 440px;
     width: 500px;
 }
+
+
+

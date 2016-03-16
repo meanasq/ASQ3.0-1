@@ -1,17 +1,26 @@
+/*
+ * @date : 03/15/2016
+ * @author : Ayesha Taqdees
+ * @description : Modified for ASQ 3.0 - Fixed Add, Update and Delete Questions
+ */
 //Added by Srinivas Thungathurti for ASQ Upgrade 2.0.New Admin screen added to application.
 app.controller('adminCtrl', function ($q, $scope, $rootScope, $http, $location) {
+	$rootScope.adminMode = true;
 	$scope.selectedValue = "";
 	$scope.currentPage = 1;
 	$scope.numPerPage = 10;
 	$scope.maxSize = 5;
+	$rootScope.currentUser.searchCat = "select";
+	
 	var begin = (($scope.currentPage - 1) * $scope.numPerPage)
     , end = begin + $scope.numPerPage;
-	$scope.searchQuestions = function (currentUser){
-		$scope.searchCat = currentUser.searchCat;
+	
+	$scope.searchQuestions = function (){
+		$scope.searchCat = $rootScope.currentUser.searchCat;
 		$scope.count = 20;
 		$scope.partialQuestions = [];
 		$scope.allQuestions = [];
-		if(currentUser.searchCat == undefined) {
+		if($rootScope.currentUser.searchCat == undefined) {
 			$scope.searchCat = $rootScope.searchCat;
 		}
 		var postData = { 
@@ -20,7 +29,7 @@ app.controller('adminCtrl', function ($q, $scope, $rootScope, $http, $location) 
 		};
 		$http.post('/getQuestions',postData).success(function (response){
 			$scope.questionsList = response;
-			for(i=0;i<=$scope.questionsList.length-1;i++) {
+			for(var i=0;i<=$scope.questionsList.length-1;i++) {
 				$scope.allQuestions.push($scope.questionsList[i]);
 			}
 			$scope.partialQuestions = $scope.allQuestions.slice(begin, end);			
@@ -37,49 +46,20 @@ app.controller('adminCtrl', function ($q, $scope, $rootScope, $http, $location) 
 	    $scope.partialQuestions = $scope.allQuestions.slice(begin, end);
 	  });
 	
-	//Added for ASQ Upgrade2.0.Add the new question information to ASQ Database (Feature available only for Admin Users).
-	//Modified below code for Issue#5 (add question functionality is not working as expected).
-	$scope.addQuestion = function (){
-		var splitChoice = $scope.addQueChoice.split("\n");
-		var formatChoice = angular.toJson(splitChoice);
-		formatChoice = formatChoice.replace('"A:',' "A" : "');
-		formatChoice = formatChoice.replace('"B:',' "B" : "');
-		formatChoice = formatChoice.replace('"C:',' "C" : "');
-		formatChoice = formatChoice.replace('"D:',' "D" : "');
-		formatChoice = formatChoice.replace('[','{ ');
-		formatChoice = formatChoice.replace(']',' }');
-		var postData = { 
-			category : $scope.addQueCat,
-			content : $scope.addQueContent,
-			//choices : JSON.parse($scope.addQueChoice),
-			choices : JSON.parse(formatChoice),
-			correctChoice : $scope.addQueCorChoice
-		};
-		$http.post('/addQuestionDet',postData).success(function (response){
-			if (response != 0){
-			alert('Success!');
-			$location.url('/questionInfo');
-			} else if (response == 'error') {
-			alert('error')
-			}
-		}).error(function (err) {
-			alert("Error!");
-			console.log(err);
-		})
-	};
 	
 	$scope.editQuestion = function (question){
+		console.log(question);
 		$scope.searchCat = question.category;
 		var postData = { 
 			category : question.category,
 			content : question.content,
-			choice : question.choices,
+			choices : question.choices,
 			correctChoice : question.correctChoice
 		};
 		$http.post('/getQuestionInfo',postData).success(function (response){
-		    $rootScope.searchCat = question.category;
+		    $rootScope.addQueCat = question.category;
 			$rootScope.content = postData.content;
-			$rootScope.choice = "A:"+postData.choice.A+"\nB:"+postData.choice.B+"\nC:"+postData.choice.C+"\nD:"+postData.choice.D;
+			$rootScope.choices = "A:"+postData.choices.A+"\nB:"+postData.choices.B+"\nC:"+postData.choices.C+"\nD:"+postData.choices.D;
 			//$rootScope.choice = JSON.stringify(postData.choice);
 			$rootScope.correctChoice = postData.correctChoice;
 			$rootScope.questionID = question._id;
@@ -90,55 +70,25 @@ app.controller('adminCtrl', function ($q, $scope, $rootScope, $http, $location) 
 		})
 	};
 	
-	//Added for ASQ Upgrade2.0.Edit and Save the selected question from/to ASQ Database (Feature available only for Admin Users).
-	$scope.saveQuestion = function (){
-		var splitChoice = $scope.choice.split("\n");
-		var formatChoice = angular.toJson(splitChoice);
-		formatChoice = formatChoice.replace('"A:',' "A" : "');
-		formatChoice = formatChoice.replace('"B:',' "B" : "');
-		formatChoice = formatChoice.replace('"C:',' "C" : "');
-		formatChoice = formatChoice.replace('"D:',' "D" : "');
-		formatChoice = formatChoice.replace('[','{ ');
-		formatChoice = formatChoice.replace(']',' }');
-		var postData = { 
-			_id : $rootScope.questionID,
-			category : $rootScope.searchCat,
-			content : $scope.content,
-			choices : formatChoice, //$scope.choice.split("\n"),
-			correctCh : $scope.correctChoice
-		};
-		$http.post('/updateQuestionDet',postData).success(function (response){
-			if (response == 'success'){
-			alert('Success!');
-			$location.url('/questionInfo');
-			} else if (response == 'error') {
-			alert('error')
-			}
-		}).error(function (err) {
-			alert("Error!");
-			console.log(err);
-		})
-	};
-	
 	//Added for ASQ Upgrade2.0.Delete the selected question from ASQ Database (Feature available only for Admin Users).
-	$scope.deleteQuestion = function (){
-		var postData = { 
-			_id : $rootScope.questionID,
-			category : $scope.searchCat
-	};
-	  if(confirm('Are you sure you want you delete this question?')) {
-		$http.post('/deleteQuestionDet',postData).success(function (response){
-		if (response == 'success'){
-			alert('Success!');
-			$location.url('/questionInfo');
-		} else if (response == 'error') {
-			alert('error')
+	$scope.deleteQuestion = function (question) {
+		var postData = {
+			_id: question._id,
+			category: question.category
+		};
+		if (confirm('Are you sure you want you delete this question?')) {
+			$http.post('/deleteQuestionDet', postData).success(function (response) {
+				if (response == 'success') {
+					alert('Success!');
+					$location.url('/questionInfo');
+				} else if (response == 'error') {
+					alert('error')
+				}
+			}).error(function (err) {
+				alert("Error!");
+				console.log(err);
+			})
 		}
-		}).error(function (err) {
-			alert("Error!");
-			console.log(err);
-		})
-	  }
 	};
 	
 	//Added for ASQ Upgrade2.0.Exam Management Screen Flow methods.
@@ -188,7 +138,7 @@ app.controller('adminCtrl', function ($q, $scope, $rootScope, $http, $location) 
 		var postData = { 
 			_id : $scope.selectedValue
 		};
-		if(confirm('Are you sure you want you delete this certification?')) {
+		if(confirm('Are you sure you want to delete this certification?')) {
 		$http.post('/delCertDet',postData).success(function (response){
 			if (response == "success"){
 				alert('Success!');
@@ -209,11 +159,11 @@ app.controller('adminCtrl', function ($q, $scope, $rootScope, $http, $location) 
 	
 	$scope.wrong = false;
 	$scope.errorClass = "";
-	if($scope.currentUser.searchCat == undefined) $scope.wrong = true;
+	if($rootScope.currentUser.searchCat == undefined) $scope.wrong = true;
 	if($scope.selectedValue == "" || $scope.selectedValue == undefined) $scope.wrong = true;
 	
 	$scope.disableSearch = function () {
-		if ($scope.currentUser.searchCat == "Select" || $scope.currentUser.searchCat == "") {
+		if ($rootScope.currentUser.searchCat == "Select" || $rootScope.currentUser.searchCat == "") {
 			$scope.wrong = true;
 			$scope.errorClass = "has-error";
 		}

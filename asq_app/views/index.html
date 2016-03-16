@@ -10,6 +10,8 @@
 	<link href="css/style.css" rel="stylesheet">
 	<link href="css/jquery-ui.css" rel="stylesheet">
 	<link href="css/datepicker/bootstrap-min.css" rel="stylesheet">
+	<!--created and Added for ASQ 3.0 by Ayesha Taqdees-->
+	<link href="css/main.css" rel="stylesheet">
 
 	<!-- Favicon -->
 	<link rel="shortcut icon" href="img/favicon/bb.png">
@@ -40,7 +42,7 @@
     <script src="js/datepicker/angular.js"></script>
     <script src="js/datepicker/ui-bootstrap-tpls-0.14.3.js"></script>
 	
-	<!-- Added for ASQ Upgrade 3.0 By Ayesha Taqdees. -->
+	<!-- Created and added controllers  By Ayesha Taqdees for ASQ 3.0. -->
 	
 	 <script src="js/controllers/datepicker.js"></script>
 	 <script src="js/controllers/index.js"></script>
@@ -58,11 +60,13 @@
 	 <script src="js/controllers/report.js"></script>
 	 <script src="js/controllers/history.js"></script>
 	 <script src="js/controllers/nav.js"></script>
+     <script src="js/controllers/addquestion.js"></script>
+     <script src="js/controllers/updatequestion.js"></script>
 
 	<title>Big Bang ASQ</title>
 </head>
 <body class="" ng-app="quizApp" ng-controller = 'indexCtrl'>
-	<timer style="text-decoration: underline; filter: alpha(opacity: 0.6); opacity: 0.6; color: red; font-weight: bold; font-size: 22px; position: fixed; top: 30px; left: 44%;" ng-if="timer" interval="1000" countdown="7200">Time Remains: {{hours}}:{{minutes}}:{{seconds}}</timer>
+	<timer class="timer" ng-if="timer" interval="1000" countdown="7200">Time Remains: {{hours}}:{{minutes}}:{{seconds}}</timer>
 	<div ng-view></div>
 </body>
 </html>
