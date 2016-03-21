@@ -193,7 +193,6 @@ app.controller('examCtrl', function ($q, $scope, $rootScope, $http, $location, $
 				postData.sqmWrong = sqmwrong;
 				postData.svvWrong = svvwrong;
 				postData.report = $rootScope.report;
-				//Added by Srinivas Thungathurti for Dynamic Chart to display on the View History screen.
 				postData.epScore = $rootScope.report.epScore;
                 postData.gkScore = $rootScope.report.gkScore;
                 postData.maScore = $rootScope.report.maScore;

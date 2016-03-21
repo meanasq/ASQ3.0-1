@@ -1,5 +1,10 @@
+/*
+ * @date : 03/15/2016
+ * @author : Ayesha Taqdees
+ * @description : Modified for ASQ 3.0 - Admin Mode
+ */
 app.controller('homeCtrl', function ($q, $scope, $rootScope, $http, $location, $interval) {
-
+    $rootScope.adminMode=false;
 	$rootScope.wrong = 0;
 	$rootScope.report = {type:'',wrong:[]};
 	$scope.exam = function (){
@@ -35,7 +40,6 @@ app.controller('homeCtrl', function ($q, $scope, $rootScope, $http, $location, $
 		}
 		$scope.selectedValue = value;
     }
-	//End changes for ASQ Upgrade2.0.
 	
 
 	$scope.logout = function () {

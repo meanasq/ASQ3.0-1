@@ -1,0 +1,33 @@
+<nav class="navbar navbar-inverse main-header" role="navigation">
+    <div class="custom-navbar-header">
+        <div class="navbar-header">
+            <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
+                <span class="sr-only">Toggle navigation</span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+            </button>
+            <a class="navbar-brand siteName" href="/home">ASQ 3.0 <span class="tagline">Perfect CSQE Virtual Exam & Practice Website</span></a>
+        </div>
+        <div class="navbar-collapse collapse">
+            <ul class="nav navbar-nav">
+
+            </ul>
+
+            <div class="navbar-form navbar-right btn-group" uib-dropdown is-open="status.isopen">
+                <button id="btnLogout" type="button" class="btn btn-sm btn-primary" uib-dropdown-toggle ng-disabled="disabled">
+                    {{currentUser.firstName}} {{currentUser.lastName}} <span class="caret"></span>
+                </button>
+                <ul uib-dropdown-menu role="menu" aria-labelledby="single-button">
+                  <!--  <li role="menuitem" ng-if="currentUser.role=='admin'"><a href="/admin">Admin</a></li>-->
+					 <li role="menuitem"><a href="/home">Home</a></li>
+                    <li role="menuitem"><a href="/profile">Profile</a></li>
+                    <li role="menuitem"><a href="/changePassword">Change Password</a></li>
+                    <li class="divider"></li>
+                    <li role="menuitem"><a href="" ng-click="logout()">Logout</a></li>
+
+                </ul>
+            </div>
+        </div>
+    </div>
+</nav>

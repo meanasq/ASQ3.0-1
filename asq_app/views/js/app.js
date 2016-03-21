@@ -1,11 +1,14 @@
 /*
+ * @date : 03/15/2016
+ * @author : Ayesha Taqdees
+ * @description : Modified for ASQ 3.0 - Redesigned UI, code cleanup, created and fixed missing functionalities
+ *
+ *
  * @date : 10/25/2015
  * @author : Srinivas Thungathurti
  * @description : Modified for ASQ Upgrade 2.0 changes for Sprint 1 (Registration and Login requirements).
  */
 var app = angular.module('quizApp', ['ngRoute', 'highcharts-ng','toggle-switch','timer','ui.bootstrap']);
-
-
 
 app.config(function ($routeProvider, $httpProvider, $locationProvider) {
 	var checkLoggedIn = function ($q, $timeout, $http, $location, $rootScope) {
@@ -27,9 +30,10 @@ app.config(function ($routeProvider, $httpProvider, $locationProvider) {
 	};
 	$locationProvider.html5Mode(true);
 	$routeProvider.
+		//Added by Ayesha Taqdees for ASQ 3.0. New landing page.
 		when('/', {
-			templateUrl: 'partials/login.html',
-			controller: 'loginCtrl'
+			templateUrl: 'partials/landing.html',
+			controller: 'landingCtrl'
 		}).
 		when('/login', {
 			templateUrl: 'partials/login.html',
@@ -90,14 +94,7 @@ app.config(function ($routeProvider, $httpProvider, $locationProvider) {
 				loggedin: checkLoggedIn
 			}
 		}).
-		when('/history', {
-			templateUrl: 'partials/history.html',
-			controller: 'historyCtrl',
-			resolve: {
-				loggedin: checkLoggedIn
-			}
-		}).
-		when('/practise', {
+        when('/practise', {
 			templateUrl: 'partials/practiseConf.html',
 			controller: 'practiseConfCtrl',
 			resolve: {
@@ -111,6 +108,13 @@ app.config(function ($routeProvider, $httpProvider, $locationProvider) {
 				loggedin: checkLoggedIn
 			}
 		}).
+		when('/history', {
+			templateUrl: 'partials/history.html',
+			controller: 'historyCtrl',
+			resolve: {
+				loggedin: checkLoggedIn
+			}
+		}).
 		when('/historyDetail', {
 			templateUrl: 'partials/historyDetail.html',
 			controller: 'historyCtrl',
@@ -118,7 +122,13 @@ app.config(function ($routeProvider, $httpProvider, $locationProvider) {
 				loggedin: checkLoggedIn
 			}
 		}).
-		//Added by Srinivas Thungathurti for ASQ Upgrade 2.0.New screens Change Password,Admin Control and User/Question Control added.
+		when('/historyDetailsStatus', {
+			templateUrl: 'partials/historyDetailStatus.html',
+			controller: 'historyCtrl',
+			resolve: {
+				loggedin: checkLoggedIn
+			}
+		}).
 		when('/changePassword', {
 			templateUrl: 'partials/changePassword.html',
 			controller: 'changePwdCtrl',
@@ -156,25 +166,19 @@ app.config(function ($routeProvider, $httpProvider, $locationProvider) {
 		}).
 		when('/updateQuestionInfo', {
 			templateUrl: 'partials/updateQuestionInfo.html',
-			controller: 'adminCtrl',
+			controller: 'updateQuestionCtrl',
 			resolve: {
 				loggedin: checkLoggedIn
 			}
 		}).
 		when('/addQuestionInfo', {
 			templateUrl: 'partials/addQuestionInfo.html',
-			controller: 'adminCtrl',
+			controller: 'addQuestionCtrl',
 			resolve: {
 				loggedin: checkLoggedIn
 			}
 		}).
-		when('/historyDetailsStatus', {
-			templateUrl: 'partials/historyDetailStatus.html',
-			controller: 'historyCtrl',
-			resolve: {
-				loggedin: checkLoggedIn
-			}
-		}).
+		
 		when('/examInfo', {
 			templateUrl: 'partials/examInfo.html',
 			controller: 'adminCtrl',
