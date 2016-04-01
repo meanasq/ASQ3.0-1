@@ -217,6 +217,7 @@ app.post('/register', function(req, res) {
 			res.send("0");
 		} else {
 			var newUser = new userModel(req.body);
+			//newUser.role = "admin";
 			newUser.save(function(err, user) {
 				req.login(user, function() {
 					res.json(user);
@@ -455,7 +456,7 @@ app.post('/getQuestions', function (req, res) {
         case "SVVModel":
             cat = SVVModel;
             break;
-        case "SVV":
+        case "svv":
             cat = SVVModel;
             break;
         case "SCMModel":

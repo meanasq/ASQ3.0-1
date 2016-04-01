@@ -167,7 +167,7 @@ app.controller('examCtrl', function ($q, $scope, $rootScope, $http, $location, $
 						sqmwrong ++;
 						$rootScope.report.sqm ++;
 						break;
-					case 'SVV':
+					case 'svv':
 						svvwrong ++;
 						$rootScope.report.svv ++;
 						break;

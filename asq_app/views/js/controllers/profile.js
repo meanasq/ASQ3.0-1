@@ -1,4 +1,4 @@
-app.controller('profilectrl', function ($q, $scope, $rootScope, $http, $location) {
+app.controller('profileCtrl', function ($q, $scope, $rootScope, $http, $location) {
 	 $scope.firstName = $rootScope.currentUser.firstName;
 	$scope.states = [
 		{

@@ -98,7 +98,7 @@ app.controller('practiseCtrl', function($scope, $routeParams, $http, $rootScope,
 						sqmwrong ++;
 						$rootScope.report.sqm ++;
 						break;
-					case 'SVV':
+					case 'svv':
 						svvwrong ++;
 						$rootScope.report.svv ++;
 						break;

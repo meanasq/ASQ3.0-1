@@ -1,0 +1,79 @@
+<div class="animated fadeInDown">
+	<div ng-include="'partials/header.html'"></div>
+	<!-- Header -->
+
+
+	<ng-form name="examInfo">
+		<div class="container">
+			<!-- Content -->
+			<h3>Exam Information Screen:</h3>
+			<hr>
+			<div class="form-group">
+				<br>
+				<div  style="border:2px solid #5BC0DE;width:950px;" data-ng-init="getCerts()">
+					<table class="table table-striped">
+						<thead>
+						<tr style="background-color:#D3D3D3">
+							<th>Exam Name</th>
+							<th>Description</th>
+							<th></th>
+						</tr>
+						</thead>
+						<tbody>
+						<tr ng-repeat="cert in certifications">
+							<td>{{cert.name}}</td>
+							<td>{{cert.description}}</td>
+							<td><input id="act" type="checkbox" name="cert" ng-model="certName" value="{{cert.name}}" ng-click="getValue(cert)"></td>
+						</tr>
+						<tr ng-show="certifications.length <= 0">
+							<td></td>
+							<td><h4 style="color:red">No Certifications Found.</h4></td>
+							<td></td>
+						</tr>
+						</tbody>
+					</table>
+				</div>
+				<br/>
+				<table>
+					<tr>
+						<td style="width:250px;"></td>
+						<td style="width:500px;" align="center">
+							<a href="/addCertificationInfo">
+								<button style="margin: 10px 10px 50px 5px; width: 95px; height: 40px; font-size: 16px" class="btn btn-primary">
+									<span class="glyphicon glyphicon-plus"></span> Add
+								</button>
+							</a>
+							<button  style="margin: 10px 10px 50px 5px; width: 95px; height: 40px; font-size: 16px" class="btn btn-warning" ng-click="removeCert()" ng-disabled="wrong">
+								<span class="glyphicon glyphicon-minus"></span> Delete
+							</button>
+							<a href="/admin">
+								<button style="margin: 10px 10px 50px 5px; width: 95px; height: 40px; font-size: 16px" class="btn btn-primary">
+									<span class="glyphicon glyphicon-chevron-left"></span> Back
+								</button>
+							</a>
+						</td>
+						<!--<td></td>-->
+					</tr>
+				</table>
+				<br/>
+				<hr>
+			</div>
+		</div>
+	</ng-form>
+
+	<!-- Footer -->
+	<footer>
+		<div class="container">
+			<div class="row">
+				<div class="col-md-12">
+					<div style="text-align: center" class="copy">
+						<h5>ASQ CSQE Virtual Exam & Practice</h5>
+						<p>&copy; <a href="/about">2015 Big Bang ASQ Exam</a></p>
+						<p>Questions Provided by <a href="http://www.qualitycouncil.com/CSQE.html" target="_blank">Quality Council of Indiana</a> and by <a href="http://www.westfallteam.com/quiz_listing" target="_blank">Linda Westfall</a></p>
+					</div>
+				</div>
+			</div>
+			<div class="clearfix"></div>
+		</div>
+	</footer>
+</div>
