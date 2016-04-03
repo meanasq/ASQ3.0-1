@@ -137,16 +137,16 @@ function getAllQuestionFromModel(Model) {
 
 //Function added for ASQ Upgrade2.0 to encrypt the passwords in ASQ Portal.
 function encrypt(pass){
-	  var cipher = crypto.createCipher('aes-256-cbc','d6F3Efeq')
-	  var crypted = cipher.update(pass,'utf8','hex')
+	  var cipher = crypto.createCipher('aes-256-cbc','d6F3Efeq');
+	  var crypted = cipher.update(pass,'utf8','hex');
 	  crypted += cipher.final('hex');
 	  return crypted;
 	}
 
 //Function added for ASQ Upgrade2.0 to decrypt the passwords from ASQ Portal.
 function decrypt(pass){
-	  var decipher = crypto.createDecipher('aes-256-cbc','d6F3Efeq')
-	  var dec = decipher.update(pass,'hex','utf8')
+	  var decipher = crypto.createDecipher('aes-256-cbc','d6F3Efeq');
+	  var dec = decipher.update(pass,'hex','utf8');
 	  dec += decipher.final('utf8');
 	  return dec;
 }
@@ -236,13 +236,13 @@ app.post('/register', function(req, res) {
 			            password: decrypt(user.password),
 			            url: "http://"+req.headers.host+"/login",
 			            name: user.firstName
-				}
+				};
 				var mail = {
 					from : emailFrom,
 					to : req.body.email,
 					subject : emailSubject,
 					html: renderTemplate(regTemplate,data)
-				}
+				};
 
 				smtpTransport.sendMail(mail, function(error, response) {
 					if (error) {
@@ -266,7 +266,7 @@ app.post('/login', passPort.authenticate('local'),function(req, res) {
 //End changes for ASQ Upgrade2.0.
 
 app.post('/logout', function(req, res) {
-	console.log(req.user.email + " has logged out.")
+	console.log(req.user.email + " has logged out.");
 	req.logout();
 	res.sendStatus(200);
 });
@@ -301,7 +301,7 @@ app.post('/forgot', function(req, res) {
 				resetPasswordExpires : Date.now() + 3600000
 			}, false, function(err) {
 				res.send(err);
-			})
+			});
 			//Send forgot password email
 			var smtpTransport = mailer.createTransport(emailTransport, {
 		        service: 'Gmail',
@@ -313,7 +313,7 @@ app.post('/forgot', function(req, res) {
 		      var data = {
 				  url: "http://"+req.headers.host+"/reset/"+token,
 				  name: user.firstName
-			  }
+			  };
 		      var mailOptions = {
 		        to: req.body.email,
 		        from: emailFrom,
@@ -363,7 +363,7 @@ app.post('/reset', function(req, res) {
 		}, false, function(err) {
 			if(err) res.send(err);
 			else console.log('Success! Your password has been changed.');
-		})
+		});
 		//Send email after succeesful password reset.
 		var smtpTransport = mailer.createTransport(emailTransport, {
 	        service: 'Gmail',
@@ -377,7 +377,7 @@ app.post('/reset', function(req, res) {
 				  password: req.body.password,
 				  name: user.firstName,
 				  url: "http://"+req.headers.host+"/login"
-	      }
+	      };
 	      var mailOptions = {
 	        to: user.email,
 	        from: emailFrom,
@@ -529,7 +529,7 @@ app.post('/getRecord', function(req, res) {
 		date : req.body.date
 	} : {
 		email : req.body.email
-	}
+	};
 	historyModel.find(query).exec(function(err, result) {
 		res.send(result)
 	})
@@ -556,7 +556,7 @@ app.post('/getUsers', function(req, res) {
 		email : req.body.email
 	} : {
 		email : req.body.email
-	}
+	};
 	userModel.find(query).exec(function(err, result) {
 		res.send(result)
 	})
@@ -729,28 +729,46 @@ app.post('/updateProfile', function(req, res) {
 		email : req.body.email
 	}, function(err, result) {
 		if (result && result.email) {
-			userModel.update({
-				email : req.body.email
-			}, {
-				firstName : req.body.firstName,
-				lastName : req.body.lastName,
-				address1 : req.body.address1,
-				address2 : req.body.address2,
-				city : req.body.city,
-				state : req.body.state,
-				zipcode : req.body.zipcode,
-				birthDate : req.body.birthDate
-			}, false, function(err, num) {
+			// first remove user
+			userModel.remove({
+				email: req.body.email
+			}, function (err, num) {
 				if (num.ok = 1) {
-					console.log('success');
-					res.send('success')
+					console.log('user remove success');
+					// now create new user
+					var newUser = new userModel({
+						email: result.email,
+						password: result.password,
+						firstName: req.body.firstName,
+						lastName: req.body.lastName,
+						address1: req.body.address1,
+						address2: req.body.address2,
+						city: req.body.city,
+						state: req.body.state,
+						zipcode: req.body.zipcode,
+						role: result.role,
+						activeIn: result.activeIn,
+						expiryDate: result.expiryDate,
+						subscriber: result.subscriber,
+						birthDate: req.body.birthDate,
+						resetPasswordToken: result.resetPasswordToken,
+						resetPasswordExpires: result.resetPasswordExpires
+					});
+					newUser.save(function (err) {
+						if (err) {
+							console.log('user create error');
+						} else {
+							console.log('user create success');
+							res.send('success')
+						}
+					});
 				} else {
 					console.log('error');
-					res.send('error')
+					res.send('remove error')
 				}
 			})
 		}
-	})
+	});
 });
 
 //Added by Srinivas Thungathurti for ASQ Upgrade2.0.saveUserProfile function added to update the user profile information using Admin User Management screen.
@@ -849,13 +867,13 @@ app.post('/changePasswd', function (req, res) {
     			            name: result.firstName,
     			            url: "http://"+req.headers.host+"/login"
     			            
-    				}
+    				};
     				var mail = {
     					from : emailFrom,
     					to : req.body.email,
     					subject : emailChangePwdSubject,
     					html: renderTemplate(chgPwdTemplate,data)
-    				}
+    				};
 
     				smtpTransport.sendMail(mail, function(error, response) {
     					if (error) {
