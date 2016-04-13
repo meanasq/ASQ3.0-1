@@ -58,10 +58,10 @@ app.controller('adminCtrl', function ($q, $scope, $rootScope, $http, $location) 
 		};
 		$http.post('/getQuestionInfo',postData).success(function (response){
 		    $rootScope.addQueCat = question.category;
-			$rootScope.content = postData.content;
-			$rootScope.choices = "A:"+postData.choices.A+"\nB:"+postData.choices.B+"\nC:"+postData.choices.C+"\nD:"+postData.choices.D;
+			$rootScope.addCont = postData.content;
+			$rootScope.addCho = "A:"+postData.choices.A+"\nB:"+postData.choices.B+"\nC:"+postData.choices.C+"\nD:"+postData.choices.D;
 			//$rootScope.choice = JSON.stringify(postData.choice);
-			$rootScope.correctChoice = postData.correctChoice;
+			$rootScope.addCorCh = postData.correctChoice;
 			$rootScope.questionID = question._id;
 			$location.url('/updateQuestionInfo');
 		}).error(function (err) {

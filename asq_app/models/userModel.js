@@ -27,7 +27,7 @@ var userSchema = new mongoose.Schema({
     resetPasswordExpires: Date
 });
 
-userSchema.plugin(encryptor, { encryptionKey: encKey, signingKey: sigKey, encryptedFields: ['firstName', 'lastName', 'address1', 'address2', 'city', 'state', 'zipcode', 'birthDate'] });
+userSchema.plugin(encryptor, { encryptionKey: encKey, signingKey: sigKey, encryptedFields: ['role', 'activeIn'] });
 
 userSchema.methods.validPassword = function( pwd ) {
     return ( this.password === pwd );

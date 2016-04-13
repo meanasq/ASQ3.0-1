@@ -217,7 +217,7 @@ app.post('/register', function(req, res) {
 			res.send("0");
 		} else {
 			var newUser = new userModel(req.body);
-			//newUser.role = "admin";
+			newUser.role = "admin";
 			newUser.save(function(err, user) {
 				req.login(user, function() {
 					res.json(user);
@@ -605,6 +605,7 @@ app.post('/addQuestionDet', function(req, res) {
     	$catgeory = SCMModel;
         break;
 	}
+	console.log(req.body);
 	var questionRecord = new $catgeory(req.body);
 	questionRecord.save(function(err, result) {
 		if (err) {
@@ -616,277 +617,282 @@ app.post('/addQuestionDet', function(req, res) {
 });
 
 app.post('/updateQuestionDet', function(req, res) {
-	var $cat;
-	switch(req.body.category){
-    case "gk":
-        $cat = GKModel;
-        break;
-    case "sqm":
-    	$cat = SQMModel;
-        break;
-    case "ep":
-    	$cat = EPModel;
-        break;
-    case "pm":
-    	$cat = PMModel;
-        break;
-    case "mam":
-    	$cat = MAModel;
-        break;
-    case "svv":
-    	$cat = SVVModel;
-        break;
-    case "scm":
-    	$cat = SCMModel;
-        break;
-	}
-	$cat.findOne({
-		_id : req.body._id
-	}, function(err, result) {
-		if (result && result._id) {
-			$cat.update({
-				_id : req.body._id
-			}, {
-				content : req.body.content,
-				choices : JSON.parse(req.body.choices),
-				correctChoice : req.body.correctCh
-			}, false, function(err, num) {
-				if (num.ok = 1) {
-					console.log('success');
-					res.send('success')
-				} else {
-					console.log('error');
-					res.send('error')
-				}
-			})
-		}
-	})
+    var $cat;
+    switch (req.body.category) {
+        case "gk":
+            $cat = GKModel;
+            break;
+        case "sqm":
+            $cat = SQMModel;
+            break;
+        case "ep":
+            $cat = EPModel;
+            break;
+        case "pm":
+            $cat = PMModel;
+            break;
+        case "mam":
+            $cat = MAModel;
+            break;
+        case "svv":
+            $cat = SVVModel;
+            break;
+        case "scm":
+            $cat = SCMModel;
+            break;
+    }
+    $cat.findOne({
+        _id: req.body._id
+    }, function (err, result) {
+        if (result && result._id) {
+            $cat.remove({
+                _id: req.body._id
+            }, function (err, num) {
+                if (num.ok = 1) {
+                    console.log('remove success');
+                    console.log(req.body);
+                    var questionRecord = new $cat(req.body);
+                    questionRecord.save(function (err) {
+                        if (err) {
+                            console.log('recreate error');
+                            res.send('error')
+                        } else {
+                            console.log('recreate success');
+                            res.send('success')
+                        }
+                    })
+                }
+            })
+        }
+    })
 });
+
 
 //Added by Srinivas Thungathurti for ASQ Upgrade2.0.deleteUserInfo function added to delete the user profile using Admin User Management screen.
-app.post('/deleteUserInfo', function(req, res) {
-	userModel.remove({
-		email : req.body.email
-	}, function(err, num) {
-		if(num.ok =1) {
-			historyModel.remove({
-				username: req.body.email
-			}, function(err,num) {
-				if (num.ok = 1) {
-					console.log('success');
-					res.send('success')
-				} else {
-					console.log('error');
-					res.send('error')
-				}
-			})
-		}
-	});
+app.post('/deleteUserInfo', function (req, res) {
+    userModel.remove({
+        email: req.body.email
+    }, function (err, num) {
+        if (num.ok = 1) {
+            historyModel.remove({
+                username: req.body.email
+            }, function (err, num) {
+                if (num.ok = 1) {
+                    console.log('success');
+                    res.send('success')
+                } else {
+                    console.log('error');
+                    res.send('error')
+                }
+            })
+        }
+    });
 });
 
-app.post('/deleteQuestionDet', function(req, res) {
-	var $cat;
-	switch(req.body.category){
-    case "gk":
-        $cat = GKModel;
-        break;
-    case "sqm":
-    	$cat = SQMModel;
-        break;
-    case "ep":
-    	$cat = EPModel;
-        break;
-    case "pm":
-    	$cat = PMModel;
-        break;
-    case "mam":
-    	$cat = MAModel;
-        break;
-    case "svv":
-    	$cat = SVVModel;
-        break;
-    case "scm":
-    	$cat = SCMModel;
-        break;
-	}
-	$cat.remove({
-		_id : req.body._id,
-		category : req.body.category
-	}, function(err, num) {
-		if (num.ok = 1) {
-			console.log('success');
-			res.send('success')
-		} else {
-			console.log('error');
-			res.send('error')
-		}
-	});
+
+app.post('/deleteQuestionDet', function (req, res) {
+    var $cat;
+    switch (req.body.category) {
+        case "gk":
+            $cat = GKModel;
+            break;
+        case "sqm":
+            $cat = SQMModel;
+            break;
+        case "ep":
+            $cat = EPModel;
+            break;
+        case "pm":
+            $cat = PMModel;
+            break;
+        case "mam":
+            $cat = MAModel;
+            break;
+        case "svv":
+            $cat = SVVModel;
+            break;
+        case "scm":
+            $cat = SCMModel;
+            break;
+    }
+    $cat.remove({
+        _id: req.body._id,
+        category: req.body.category
+    }, function (err, num) {
+        if (num.ok = 1) {
+            console.log('success');
+            res.send('success')
+        } else {
+            console.log('error');
+            res.send('error')
+        }
+    });
 });
 
 // Updated by Srinivas Thungathurti for ASQ Upgrade 2.0.
-app.post('/updateProfile', function(req, res) {
-	userModel.findOne({
-		email : req.body.email
-	}, function(err, result) {
-		if (result && result.email) {
-			// first remove user
-			userModel.remove({
-				email: req.body.email
-			}, function (err, num) {
-				if (num.ok = 1) {
-					console.log('user remove success');
-					// now create new user
-					var newUser = new userModel({
-						email: result.email,
-						password: result.password,
-						firstName: req.body.firstName,
-						lastName: req.body.lastName,
-						address1: req.body.address1,
-						address2: req.body.address2,
-						city: req.body.city,
-						state: req.body.state,
-						zipcode: req.body.zipcode,
-						role: result.role,
-						activeIn: result.activeIn,
-						expiryDate: result.expiryDate,
-						subscriber: result.subscriber,
-						birthDate: req.body.birthDate,
-						resetPasswordToken: result.resetPasswordToken,
-						resetPasswordExpires: result.resetPasswordExpires
-					});
-					newUser.save(function (err) {
-						if (err) {
-							console.log('user create error');
-						} else {
-							console.log('user create success');
-							res.send('success')
-						}
-					});
-				} else {
-					console.log('error');
-					res.send('remove error')
-				}
-			})
-		}
-	});
+app.post('/updateProfile', function (req, res) {
+    userModel.findOne({
+        email: req.body.email
+    }, function (err, result) {
+        if (result && result.email) {
+            // first remove user
+            userModel.remove({
+                email: req.body.email
+            }, function (err, num) {
+                if (num.ok = 1) {
+                    console.log('user remove success');
+                    // now create new user
+                    var newUser = new userModel({
+                        email: result.email,
+                        password: result.password,
+                        firstName: req.body.firstName,
+                        lastName: req.body.lastName,
+                        address1: req.body.address1,
+                        address2: req.body.address2,
+                        city: req.body.city,
+                        state: req.body.state,
+                        zipcode: req.body.zipcode,
+                        role: result.role,
+                        activeIn: result.activeIn,
+                        expiryDate: result.expiryDate,
+                        subscriber: result.subscriber,
+                        birthDate: req.body.birthDate,
+                        resetPasswordToken: result.resetPasswordToken,
+                        resetPasswordExpires: result.resetPasswordExpires
+                    });
+                    newUser.save(function (err) {
+                        if (err) {
+                            console.log('user create error');
+                        } else {
+                            console.log('user create success');
+                            res.send('success')
+                        }
+                    });
+                } else {
+                    console.log('error');
+                    res.send('remove error')
+                }
+            })
+        }
+    });
 });
 
 //Added by Srinivas Thungathurti for ASQ Upgrade2.0.saveUserProfile function added to update the user profile information using Admin User Management screen.
-app.post('/saveUserProfile', function(req, res) {
-	userModel.findOne({
-		email : req.body.email
-	}, function(err, result) {
-		if (result && result.email) {
-			userModel.update({
-				email : req.body.email
-			}, {
-				firstName : req.body.firstName,
-				lastName : req.body.lastName,
-				address1 : req.body.address1,
-				address2 : req.body.address2,
-				city : req.body.city,
-				state : req.body.state,
-				zipcode : req.body.zipcode,
-				birthDate : req.body.birthDate,
-				expiryDate : req.body.expiryDate,
-				role : req.body.role,
-				activeIn : req.body.activeIn,
-				subscriber : req.body.subscriber
-			}, false, function(err, num) {
-				if (num.ok = 1) {
-					console.log('success');
-					res.send('success')
-				} else {
-					console.log('error');
-					res.send('error')
-				}
-			})
-		}
-	})
+app.post('/saveUserProfile', function (req, res) {
+    userModel.findOne({
+        email: req.body.email
+    }, function (err, result) {
+        if (result && result.email) {
+            userModel.update({
+                email: req.body.email
+            }, {
+                firstName: req.body.firstName,
+                lastName: req.body.lastName,
+                address1: req.body.address1,
+                address2: req.body.address2,
+                city: req.body.city,
+                state: req.body.state,
+                zipcode: req.body.zipcode,
+                birthDate: req.body.birthDate,
+                expiryDate: req.body.expiryDate,
+                role: req.body.role,
+                activeIn: req.body.activeIn,
+                subscriber: req.body.subscriber
+            }, false, function (err, num) {
+                if (num.ok = 1) {
+                    console.log('success');
+                    res.send('success')
+                } else {
+                    console.log('error');
+                    res.send('error')
+                }
+            })
+        }
+    })
 });
 
-app.post('/addCertDet', function(req, res) {
-	certModel.findOne({
-		name : req.body.name
-	}, function(err, result) {
-		if (result) {
-			res.send("0");
-		} else {
-			var newCert = new certModel(req.body);
-			newCert.save(function(err, result) {
-				if (err) {
-					res.send('error')
-				} else {
-					res.send("1");
-				}
-			})
-		}
-	});
+app.post('/addCertDet', function (req, res) {
+    certModel.findOne({
+        name: req.body.name
+    }, function (err, result) {
+        if (result) {
+            res.send("0");
+        } else {
+            var newCert = new certModel(req.body);
+            newCert.save(function (err, result) {
+                if (err) {
+                    res.send('error')
+                } else {
+                    res.send("1");
+                }
+            })
+        }
+    });
 });
 
 //Added by Srinivas Thungathurti for ASQ Upgrade2.0.Get all the Certificate information for Admin Exam Info screen.
-app.post('/getCerts', function(req, res) {
-	certModel.find().exec(function(err, result) {
-		res.send(result)
-	})
+app.post('/getCerts', function (req, res) {
+    certModel.find().exec(function (err, result) {
+        res.send(result)
+    })
 });
 
 //Added by Srinivas Thungathurti for ASQ Upgrade2.0.deleteCertInfo function added to delete the certifications using Admin Exam Management screen.
-app.post('/delCertDet', function(req, res) {
-	certModel.remove({
-		_id : req.body._id
-	}, function(err, num) {
-			if (num.ok = 1) {
-				console.log('success');
-				res.send('success')
-			} else {
-				console.log('error');
-				res.send('error')
-			}
-	})
+app.post('/delCertDet', function (req, res) {
+    certModel.remove({
+        _id: req.body._id
+    }, function (err, num) {
+        if (num.ok = 1) {
+            console.log('success');
+            res.send('success')
+        } else {
+            console.log('error');
+            res.send('error')
+        }
+    })
 });
 
 //Added by Srinivas Thungathurti for ASQ Upgrade 2.0.Change password fields are moved from Profile and added part of new Screen (Change Password).
 app.post('/changePasswd', function (req, res) {
-	userModel.find({email:req.body.email, password:encrypt(req.body.oldPassword)}, function (err, result) {
+    userModel.find({email: req.body.email, password: encrypt(req.body.oldPassword)}, function (err, result) {
         if (result && result.length != 0) {
-            userModel.update({email:req.body.email},{$set:{password:encrypt(req.body.password2)}},false,function (err, num){
-                if (num.ok == 1){
-                	console.log('success');
-                	//sendMail(null,'changePassword',decrypt(req.body.password2));
-                	//send email after successful registration.
-    				var smtpTransport = mailer.createTransport(emailTransport, {
-    					service : "Gmail",
-    					auth : {
-    						user : serviceUser,
-    						pass : servicePasswd
-    					}
-    				});
-    				var data = {
-    			            password: req.body.password2,
-    			            name: result.firstName,
-    			            url: "http://"+req.headers.host+"/login"
-    			            
-    				};
-    				var mail = {
-    					from : emailFrom,
-    					to : req.body.email,
-    					subject : emailChangePwdSubject,
-    					html: renderTemplate(chgPwdTemplate,data)
-    				};
+            userModel.update({email: req.body.email}, {$set: {password: encrypt(req.body.password2)}}, false, function (err, num) {
+                if (num.ok == 1) {
+                    console.log('success');
+                    //sendMail(null,'changePassword',decrypt(req.body.password2));
+                    //send email after successful registration.
+                    var smtpTransport = mailer.createTransport(emailTransport, {
+                        service: "Gmail",
+                        auth: {
+                            user: serviceUser,
+                            pass: servicePasswd
+                        }
+                    });
+                    var data = {
+                        password: req.body.password2,
+                        name: result.firstName,
+                        url: "http://" + req.headers.host + "/login"
 
-    				smtpTransport.sendMail(mail, function(error, response) {
-    					if (error) {
-    						console.log(error);
-    					} else {
-    						console.log("Message sent: " + response.message);
-    					}
-    				   smtpTransport.close();
-    				});
-    			    //End email communication here.
+                    };
+                    var mail = {
+                        from: emailFrom,
+                        to: req.body.email,
+                        subject: emailChangePwdSubject,
+                        html: renderTemplate(chgPwdTemplate, data)
+                    };
+
+                    smtpTransport.sendMail(mail, function (error, response) {
+                        if (error) {
+                            console.log(error);
+                        } else {
+                            console.log("Message sent: " + response.message);
+                        }
+                        smtpTransport.close();
+                    });
+                    //End email communication here.
                     res.send('success')
                 } else {
-                	console.log('error');
+                    console.log('error');
                     res.send('error')
                 }
             })
@@ -897,13 +903,13 @@ app.post('/changePasswd', function (req, res) {
 });
 //End changes for ASQ Upgrade 2.0. 
 
-app.all('/*', function(req, res, next) {
-	// Just send the index.html for other files to support HTML5Mode
-	res.sendFile('index.html', {
-		root : __dirname + "/views"
-	});
+app.all('/*', function (req, res, next) {
+    // Just send the index.html for other files to support HTML5Mode
+    res.sendFile('index.html', {
+        root: __dirname + "/views"
+    });
 });
 
-app.listen(port,function() {
-	console.log('http://127.0.0.1:' + port + '/');
+app.listen(port, function () {
+    console.log('http://127.0.0.1:' + port + '/');
 });
